@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import cn from 'classnames';
 
 import { Todo } from '../../types/Todo';
@@ -15,6 +15,11 @@ type TitleState = {
   setTodoTitle: (el: string) => void;
 };
 
+type ActivationArrowState = {
+  activationArrow: boolean;
+  setActivationArrow: (el: boolean) => void;
+};
+
 type Props = {
   todosState: TodosState;
   titleState: TitleState;
@@ -29,6 +34,7 @@ type Props = {
     userId: number,
   ) => Promise<Todo | void>;
   setErrorMessage: (el: string) => void;
+  activationArrowState: ActivationArrowState;
 };
 
 export const Header: React.FC<Props> = ({
@@ -41,9 +47,8 @@ export const Header: React.FC<Props> = ({
   loading,
   addTodos,
   setErrorMessage,
+  activationArrowState,
 }) => {
-  const [activationArrow, setActivationArrow] = useState(false);
-
   {
     /* eslint-disable-next-line */
   }
@@ -73,9 +78,11 @@ export const Header: React.FC<Props> = ({
   };
 
   const handleActivationArrow = () => {
-    setActivationArrow(!activationArrow);
+    activationArrowState.setActivationArrow(
+      !activationArrowState.activationArrow,
+    );
 
-    const newCompletedStatus = !activationArrow;
+    const newCompletedStatus = !activationArrowState.activationArrow;
 
     const idsToUpdate = todosState.todos
       .filter(todo => todo.completed !== newCompletedStatus)
@@ -104,13 +111,15 @@ export const Header: React.FC<Props> = ({
     });
   };
 
+  const areAllCompleted = todosState.todos.every(todo => todo.completed);
+
   return (
     <header className="todoapp__header">
       {!!todosState.todos.length && (
         <button
           type="button"
           className={cn('todoapp__toggle-all', {
-            active: activationArrow,
+            active: areAllCompleted,
           })}
           data-cy="ToggleAllButton"
           onClick={() => {

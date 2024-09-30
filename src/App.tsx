@@ -16,6 +16,7 @@ export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loadingTodo, setLoadingTodo] = useState<Todo | null>(null);
 
+  const [activationArrow, setActivationArrow] = useState(false);
   const [selectedSort, setSelectedSort] = useState<SortBy>(SortBy.All);
   const [errorMessage, setErrorMessage] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -84,7 +85,12 @@ export const App: React.FC = () => {
   useEffect(() => {
     todoService
       .getTodos()
-      .then(setTodos)
+      .then(currentTodos => {
+        const hasIncompleteTodos = currentTodos.some(td => !td.completed);
+
+        setActivationArrow(!hasIncompleteTodos);
+        setTodos(currentTodos);
+      })
       .catch(er => {
         showErrorMesage('Unable to load todos', setErrorMessage);
         throw er;
@@ -109,6 +115,7 @@ export const App: React.FC = () => {
           loading={loading}
           addTodos={addTodos}
           setErrorMessage={setErrorMessage}
+          activationArrowState={{ activationArrow, setActivationArrow }}
         />
 
         <TodoList

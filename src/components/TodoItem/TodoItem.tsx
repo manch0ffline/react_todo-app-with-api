@@ -7,7 +7,10 @@ import { showErrorMesage } from '../../utils/showErrorMesage';
 
 type Props = {
   todo: Todo;
-  todosFunction: (el: Todo[]) => void;
+  todosFunction: (
+    todosOrCallback: Todo[] | ((todos: Todo[]) => Todo[]),
+  ) => void;
+
   errorFunction: (el: string) => void;
   deletingFunction: (el: boolean) => void;
   deletingListId: number[];
@@ -50,6 +53,13 @@ export const TodoItem: React.FC<Props> = ({
       })
       .catch(er => {
         showErrorMesage('Unable to delete a todo', errorFunction);
+
+        setTimeout(() => {
+          if (inputRefChange.current) {
+            inputRefChange.current.focus();
+          }
+        }, 0);
+
         throw er;
       })
       .finally(() => {
@@ -65,14 +75,12 @@ export const TodoItem: React.FC<Props> = ({
 
     updateTodo({ ...todo, completed: !todo.completed })
       .then(updatedTodo => {
-        const updatedTodos = todos.map(td =>
-          td.id === updatedTodo.id ? updatedTodo : td,
+        todosFunction(currentTodos =>
+          currentTodos.map(td => (td.id === updatedTodo.id ? updatedTodo : td)),
         );
-
-        todosFunction(updatedTodos);
       })
       .catch(er => {
-        showErrorMesage('Unable to update a todo ', errorFunction);
+        showErrorMesage('Unable to update a todo', errorFunction);
         throw er;
       })
       .finally(() => {
@@ -108,7 +116,7 @@ export const TodoItem: React.FC<Props> = ({
           setChangeInputText('');
         })
         .catch(er => {
-          showErrorMesage('Unable to update a todo', errorFunction);
+          showErrorMesage('Unable to delete a todo', errorFunction);
 
           if (inputRefChange.current) {
             inputRefChange.current.focus();
@@ -135,7 +143,7 @@ export const TodoItem: React.FC<Props> = ({
         setChangeInputText('');
       })
       .catch(er => {
-        showErrorMesage('Unable to update a todo ', errorFunction);
+        showErrorMesage('Unable to update a todo', errorFunction);
 
         if (inputRefChange.current) {
           inputRefChange.current.focus();

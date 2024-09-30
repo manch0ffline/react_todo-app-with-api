@@ -9,7 +9,9 @@ type Props = {
   errorFunction: (el: string) => void;
   deletingFunction: (el: boolean) => void;
   deletingListId: number[];
-  todosFunction: (el: Todo[]) => void;
+  todosFunction: (
+    todosOrCallback: Todo[] | ((todos: Todo[]) => Todo[]),
+  ) => void;
   todos: Todo[];
   focusInput: () => void;
   activateTodosId: number[];
