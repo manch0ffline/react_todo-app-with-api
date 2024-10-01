@@ -13,25 +13,25 @@ type TodosFunction = {
 };
 
 type Props = {
-  sortFunction: (el: SortBy) => void;
+  setSelectedSort: (el: SortBy) => void;
   todos: Todo[];
   howSort: SortBy;
-  todosFunction: TodosFunction;
-  errorFunction: (el: string) => void;
+  setTodos: TodosFunction;
+  setErrorMessage: (el: string) => void;
   focusInput: () => void;
-  deletingFunction: (el: boolean) => void;
-  deletingListFunction: (ids: number[]) => void;
+  setIsDeleting: (el: boolean) => void;
+  setDeletingListId: (ids: number[]) => void;
 };
 
 export const Footer: React.FC<Props> = ({
-  sortFunction,
+  setSelectedSort,
   todos,
   howSort,
-  todosFunction,
-  errorFunction,
+  setTodos,
+  setErrorMessage,
   focusInput,
-  deletingFunction,
-  deletingListFunction,
+  setIsDeleting,
+  setDeletingListId,
 }) => {
   const handleClearCompleted = async () => {
     const completedTodosIds = todos
@@ -42,23 +42,23 @@ export const Footer: React.FC<Props> = ({
       return;
     }
 
-    deletingListFunction(completedTodosIds);
-    deletingFunction(true);
+    setDeletingListId(completedTodosIds);
+    setIsDeleting(true);
 
     Promise.allSettled(
       completedTodosIds.map(async todoId => {
         try {
           await todoService.deleteTodo(todoId);
-          todosFunction((currentTodos: Todo[]) =>
+          setTodos((currentTodos: Todo[]) =>
             currentTodos.filter(todo => todo.id !== todoId),
           );
         } catch {
-          showErrorMesage('Unable to delete a todo', errorFunction);
+          showErrorMesage('Unable to delete a todo', setErrorMessage);
         }
       }),
     ).finally(() => {
-      deletingListFunction([]);
-      deletingFunction(false);
+      setDeletingListId([]);
+      setIsDeleting(false);
       setTimeout(() => {
         focusInput();
       }, 0);
@@ -81,7 +81,7 @@ export const Footer: React.FC<Props> = ({
                 selected: howSort === enumElement,
               })}
               data-cy={`FilterLink${enumElement}`}
-              onClick={() => sortFunction(enumElement)}
+              onClick={() => setSelectedSort(enumElement)}
             >
               {enumElement}
             </a>

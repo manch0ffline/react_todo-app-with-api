@@ -121,10 +121,10 @@ export const App: React.FC = () => {
         <TodoList
           sortedArray={sortedArray}
           loadingTodo={loadingTodo}
-          errorFunction={setErrorMessage}
-          deletingFunction={setIsDeleting}
+          setErrorMessage={setErrorMessage}
+          setIsDeleting={setIsDeleting}
           deletingListId={deletingListId}
-          todosFunction={setTodos}
+          setTodos={setTodos}
           todos={todos}
           focusInput={handleFocusInput}
           activateTodosId={activateTodosId}
@@ -132,14 +132,14 @@ export const App: React.FC = () => {
 
         {!!todos.length && (
           <Footer
-            sortFunction={setSelectedSort}
+            setSelectedSort={setSelectedSort}
             todos={todos}
             howSort={selectedSort}
-            todosFunction={setTodos}
-            errorFunction={setErrorMessage}
+            setTodos={setTodos}
+            setErrorMessage={setErrorMessage}
             focusInput={handleFocusInput}
-            deletingFunction={setIsDeleting}
-            deletingListFunction={setDeletingListId}
+            setIsDeleting={setIsDeleting}
+            setDeletingListId={setDeletingListId}
           />
         )}
       </div>

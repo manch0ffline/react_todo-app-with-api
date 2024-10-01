@@ -6,12 +6,10 @@ import { TodoItem } from '../TodoItem/TodoItem';
 type Props = {
   sortedArray: Todo[];
   loadingTodo: Todo | null;
-  errorFunction: (el: string) => void;
-  deletingFunction: (el: boolean) => void;
+  setErrorMessage: (el: string) => void;
+  setIsDeleting: (el: boolean) => void;
   deletingListId: number[];
-  todosFunction: (
-    todosOrCallback: Todo[] | ((todos: Todo[]) => Todo[]),
-  ) => void;
+  setTodos: (todosOrCallback: Todo[] | ((todos: Todo[]) => Todo[])) => void;
   todos: Todo[];
   focusInput: () => void;
   activateTodosId: number[];
@@ -20,10 +18,10 @@ type Props = {
 export const TodoList: React.FC<Props> = ({
   sortedArray,
   loadingTodo,
-  errorFunction,
-  deletingFunction,
+  setErrorMessage,
+  setIsDeleting,
   deletingListId,
-  todosFunction,
+  setTodos,
   todos,
   focusInput,
   activateTodosId,
@@ -34,9 +32,9 @@ export const TodoList: React.FC<Props> = ({
         <TodoItem
           key={todo.id}
           todo={todo}
-          todosFunction={todosFunction}
-          errorFunction={errorFunction}
-          deletingFunction={deletingFunction}
+          setTodos={setTodos}
+          setErrorMessage={setErrorMessage}
+          setIsDeleting={setIsDeleting}
           deletingListId={deletingListId}
           todos={todos}
           focusInput={focusInput}

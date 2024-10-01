@@ -7,12 +7,10 @@ import { showErrorMesage } from '../../utils/showErrorMesage';
 
 type Props = {
   todo: Todo;
-  todosFunction: (
-    todosOrCallback: Todo[] | ((todos: Todo[]) => Todo[]),
-  ) => void;
+  setTodos: (todosOrCallback: Todo[] | ((todos: Todo[]) => Todo[])) => void;
 
-  errorFunction: (el: string) => void;
-  deletingFunction: (el: boolean) => void;
+  setErrorMessage: (el: string) => void;
+  setIsDeleting: (el: boolean) => void;
   deletingListId: number[];
   todos: Todo[];
   focusInput: () => void;
@@ -21,9 +19,9 @@ type Props = {
 
 export const TodoItem: React.FC<Props> = ({
   todo,
-  todosFunction,
-  errorFunction,
-  deletingFunction,
+  setTodos,
+  setErrorMessage,
+  setIsDeleting,
   deletingListId,
   todos,
   focusInput,
@@ -43,16 +41,16 @@ export const TodoItem: React.FC<Props> = ({
 
   const handleDeleteBtn = (todoId: number) => {
     setLoader(true);
-    deletingFunction(true);
+    setIsDeleting(true);
 
     deleteTodo(id)
       .then(() => {
         const updatedTodos = todos.filter((td: Todo) => td.id !== todoId);
 
-        todosFunction(updatedTodos);
+        setTodos(updatedTodos);
       })
       .catch(er => {
-        showErrorMesage('Unable to delete a todo', errorFunction);
+        showErrorMesage('Unable to delete a todo', setErrorMessage);
 
         setTimeout(() => {
           if (inputRefChange.current) {
@@ -64,7 +62,7 @@ export const TodoItem: React.FC<Props> = ({
       })
       .finally(() => {
         setLoader(false);
-        deletingFunction(false);
+        setIsDeleting(false);
         setTimeout(() => focusInput(), 0);
         setChangeInputText('');
       });
@@ -75,12 +73,12 @@ export const TodoItem: React.FC<Props> = ({
 
     updateTodo({ ...todo, completed: !todo.completed })
       .then(updatedTodo => {
-        todosFunction(currentTodos =>
+        setTodos(currentTodos =>
           currentTodos.map(td => (td.id === updatedTodo.id ? updatedTodo : td)),
         );
       })
       .catch(er => {
-        showErrorMesage('Unable to update a todo', errorFunction);
+        showErrorMesage('Unable to update a todo', setErrorMessage);
         throw er;
       })
       .finally(() => {
@@ -104,19 +102,19 @@ export const TodoItem: React.FC<Props> = ({
     setLoader(true);
 
     if (changeInputText.trim() === '') {
-      deletingFunction(true);
+      setIsDeleting(true);
 
       deleteTodo(id)
         .then(() => {
           const updatedTodos = todos.filter((td: Todo) => td.id !== id);
 
-          todosFunction(updatedTodos);
+          setTodos(updatedTodos);
           setTimeout(() => focusInput(), 0);
           setIsChangeInput(false);
           setChangeInputText('');
         })
         .catch(er => {
-          showErrorMesage('Unable to delete a todo', errorFunction);
+          showErrorMesage('Unable to delete a todo', setErrorMessage);
 
           if (inputRefChange.current) {
             inputRefChange.current.focus();
@@ -126,7 +124,7 @@ export const TodoItem: React.FC<Props> = ({
         })
         .finally(() => {
           setLoader(false);
-          deletingFunction(false);
+          setIsDeleting(false);
         });
 
       return;
@@ -138,12 +136,12 @@ export const TodoItem: React.FC<Props> = ({
           td.id === updatedTodo.id ? updatedTodo : td,
         );
 
-        todosFunction(updatedTodos);
+        setTodos(updatedTodos);
         setIsChangeInput(false);
         setChangeInputText('');
       })
       .catch(er => {
-        showErrorMesage('Unable to update a todo', errorFunction);
+        showErrorMesage('Unable to update a todo', setErrorMessage);
 
         if (inputRefChange.current) {
           inputRefChange.current.focus();
